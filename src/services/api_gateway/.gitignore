@@ -1,6 +1,5 @@
 # Node modules
 node_modules
-package-lock.json
 
 # Adonis directory for storing tmp files
 tmp
@@ -9,4 +8,4 @@ tmp
 .env
 
 # The development sqlite file
-database/development.sqlite
+database/*.sqlite
