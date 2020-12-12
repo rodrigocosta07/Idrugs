@@ -42,4 +42,12 @@ export class CreateUserDto {
         message: 'A confirmação de senha deve ter no mínimo 6 caracteres',
       })
       passwordConfirmation: string;
+
+      @IsNotEmpty({
+        message: 'Informe o numero do celular',
+      })
+      @MinLength(6, {
+        message: 'O Numero do celular deve ter 11 caracteres',
+      })
+      phone: string;
   }

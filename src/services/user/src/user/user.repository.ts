@@ -13,13 +13,14 @@ export class UserRepository extends Repository<User> {
         createUserDto: CreateUserDto,
         type: UserType,
       ): Promise<User> {
-        const { email, name, password } = createUserDto;
+        const { email, name, password , phone} = createUserDto;
     
         const user = this.create();
         user.email = email;
         user.name = name;
         user.type = type;
         user.status = true;
+        user.phone = phone;
         user.confirmationToken = crypto.randomBytes(32).toString('hex');
         user.salt = await bcrypt.genSalt();
         user.password = await this.hashPassword(password, user.salt);
@@ -29,7 +30,7 @@ export class UserRepository extends Repository<User> {
           delete user.salt;
           return user;
         } catch (error) {
-          if (error.code.toString() === '23505') {
+          if (error.code.toString() === 'ER_DUP_ENTRY') {
             throw new ConflictException('Endereço de email já está em uso');
           } else {
             throw new InternalServerErrorException(

@@ -23,6 +23,14 @@ export class AuthService {
         }
     }
 
+    async signUpEstablishment(createUserDto: CreateUserDto): Promise<User> {
+        if (createUserDto.password != createUserDto.passwordConfirmation) {
+            throw new UnprocessableEntityException('As senhas não conferem');
+        } else {
+            return await this.userRepository.createUser(createUserDto, UserType.ESTABLISHMENT);
+        }
+    }
+
     async signIn(credentialsDto: CredentialsDto) {
         const user = await this.userRepository.checkCredentials(credentialsDto);
 
