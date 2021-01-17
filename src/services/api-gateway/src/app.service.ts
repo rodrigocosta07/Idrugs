@@ -17,6 +17,17 @@ export class AppService {
     console.log(payload);
     return this.clientServiceA
     .send<any>({cmd: 'signin'}, payload)
-     
+  }
+
+  createProduct(payload) {
+    console.log(payload);
+    return this.clientServiceA
+    .send<any>({cmd: 'createProduct'}, payload)
+  }
+
+  getAllProducts(payload) {
+    console.log(payload);
+    return this.clientServiceA
+    .send<any>({cmd: 'getAllProducts'}, payload)
   }
 }

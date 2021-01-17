@@ -16,4 +16,14 @@ export class AppController {
   signin(@Req() request: Request) {
     return this.appService.signin(request.body);
   }
+
+  @Post("/createProduct")
+  createProduct(@Req() request: Request) {
+    return this.appService.createProduct(request.body);
+  }
+
+  @Get("/getAllProducts")
+  getAllProducts(@Req() request: Request) {
+    return this.appService.getAllProducts(request.body);
+  }
 }
