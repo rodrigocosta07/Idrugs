@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
 import { MessagePattern } from "@nestjs/microservices";
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from './user.decorator';
+import { GetUser, GetCurrentUser } from './user.decorator';
 import { User } from 'src/user/user.model';
 import { ExceptionFilter } from 'filter/rpc-exception.filter';
 
@@ -12,7 +12,7 @@ import { ExceptionFilter } from 'filter/rpc-exception.filter';
 export class AuthController {
     constructor(private authService: AuthService) {}
     
-    @MessagePattern({ cmd: "signup" })
+    @ MessagePattern({ cmd: "signup" })
     @UseFilters(new ExceptionFilter())
     async signUp(
       @Body(ValidationPipe) createUserDto: CreateUserDto,
@@ -41,9 +41,9 @@ export class AuthController {
       return await this.authService.signIn(credentiaslsDto);
     }
 
-    @MessagePattern({ cmd: "me" })
-    @UseGuards(AuthGuard())
-    getMe(@GetUser() req): User {
-      return req.user;
+    @MessagePattern({ cmd: "currentUser" })
+    async currentUser(req): Promise<any> {
+      return await this.authService.checkUser(req);
     }
+
 }

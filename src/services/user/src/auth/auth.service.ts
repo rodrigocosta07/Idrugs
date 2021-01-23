@@ -14,7 +14,7 @@ export class AuthService {
         private userRepository: UserRepository,
         private jwtService: JwtService
     ) { }
-    
+
     async signUp(createUserDto: CreateUserDto): Promise<User> {
         if (createUserDto.password != createUserDto.passwordConfirmation) {
             throw new UnprocessableEntityException('As senhas não conferem');
@@ -40,9 +40,28 @@ export class AuthService {
 
         const jwtPayload = {
             id: user.id,
-          };
-          const token = await this.jwtService.sign(jwtPayload);
-      
-          return { token };
+        };
+        const token = await this.jwtService.sign(jwtPayload);
+
+        return { token };
+    }
+
+    async checkUser(token: string) {
+        if (token.startsWith('Bearer ')) {
+            token = token.split(' ')[1]
+        }
+        var infoUser = this.jwtService.verify(token)
+        let user;
+        if (infoUser) {
+            user = await this.userRepository.findOne({
+                where: {
+                    id: infoUser.id,
+                    status: true
+                }
+            })
+        } else {
+            throw new UnauthorizedException('Credenciais inválidas');
+        }
+        return user
     }
 }

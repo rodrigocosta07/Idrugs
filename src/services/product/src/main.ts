@@ -12,6 +12,6 @@ async function bootstrap() {
       port: 8889
     }
   });
-  await app.listen(() => logger.log("Microservice User is listening"));
+  await app.listen(() => logger.log("Microservice PRODUCT is listening"));
 }
 bootstrap();

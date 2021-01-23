@@ -7,3 +7,10 @@ export const GetUser = createParamDecorator(
     return user;
   },
 );
+
+export const GetCurrentUser = createParamDecorator(
+  (data, req): any => {
+    const user = req.args[0].user;
+    return user;
+  },
+);

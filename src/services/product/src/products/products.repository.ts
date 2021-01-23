@@ -1,7 +1,8 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { ProductModel } from './product.model';
-import { CreateProductDto } from './dto/product.dto';
+import { CreateProductDto, editProductDto } from './dto/product.dto';
+import { exception } from 'console';
 @EntityRepository(ProductModel)
 export class ProductRepository extends Repository<ProductModel> {
 
@@ -36,4 +37,41 @@ export class ProductRepository extends Repository<ProductModel> {
     return products;
   }
 
+  async getProduct(id: string): Promise<ProductModel> {
+    const product = this.findOne({
+      where: {
+        status: true,
+        id: id
+      }
+    });
+    return product;
+  }
+
+  async editProduct(editProduct: editProductDto): Promise<ProductModel> {
+    const product = this.findOne({
+      where: {
+        status: true,
+        id: editProduct.id
+      }
+    });
+
+    if (!product) {
+      throw new exception("Produto não encontrado!")
+    }
+    (await product).name = editProduct.name;
+    (await product).image = editProduct.image;
+    (await product).amount = editProduct.amount;
+    (await product).value = editProduct.value;
+    (await product).status = editProduct.status;
+    (await product).updatedAt = new Date();
+    
+    try {
+      await (await product).save();
+      return product;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao atualizar o produto no banco de dados',
+      );
+    }
+  }
 }

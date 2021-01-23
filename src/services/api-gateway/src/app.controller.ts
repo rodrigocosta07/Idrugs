@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseFilters } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
 
@@ -18,12 +18,30 @@ export class AppController {
   }
 
   @Post("/createProduct")
-  createProduct(@Req() request: Request) {
-    return this.appService.createProduct(request.body);
+  async createProduct(@Req() request: Request) {
+    const userId = await this.appService.getCurrentUser(request.headers.authorization);
+    if (userId) {
+      request.body.IdEstablishment = userId
+      return this.appService.createProduct(request.body);
+    }
   }
-
+  
+  @Post("/editProduct")
+  async editProduct(@Req() request: Request) {
+    const userId = await this.appService.getCurrentUser(request.headers.authorization);
+    if (userId) {
+      return this.appService.editProduct(request.body);
+    }
+  }
   @Get("/getAllProducts")
   getAllProducts(@Req() request: Request) {
     return this.appService.getAllProducts(request.body);
   }
+
+  @Get("/getProduct/:id")
+  getProduct(@Param('id') id: string) {
+    return this.appService.getProduct(id);
+  }
+
+ 
 }
