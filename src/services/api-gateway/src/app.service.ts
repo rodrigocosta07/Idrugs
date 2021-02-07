@@ -15,6 +15,11 @@ export class AppService {
       .send<any>({ cmd: 'signup' }, payload).toPromise();
   }
 
+  signupEstablishment(payload) {
+    return this.userService
+      .send<any>({ cmd: 'signUpEstablishment' }, payload).toPromise();
+  }
+
   signin(payload) {
     console.log(payload);
     return this.userService
@@ -45,12 +50,17 @@ export class AppService {
   }
 
   async getCurrentUser(payload) {
-    var user = await this.userService
-      .send<any>({ cmd: 'currentUser' }, payload).toPromise()
-    if (user && user.type === 'ESTABLISHMENT') {
-      return user.id
-    } else {
-      throw new exception('Usuário não tem permissão para cadastrar produtos')
+    try {
+      var user = await this.userService
+        .send<any>({ cmd: 'currentUser' }, payload).toPromise()
+      if (user && user.type === 'ESTABLISHMENT') {
+        return user
+      } else {
+        throw new exception('Usuário não tem permissão para cadastrar produtos')
+      }
+    } catch (error) {
+      throw new exception(error)
     }
+
   }
 }

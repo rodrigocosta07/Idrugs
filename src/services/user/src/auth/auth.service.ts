@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/user.dto';
 import { User } from 'src/user/user.model';
@@ -27,7 +27,7 @@ export class AuthService {
         if (createUserDto.password != createUserDto.passwordConfirmation) {
             throw new UnprocessableEntityException('As senhas não conferem');
         } else {
-            return await this.userRepository.createUser(createUserDto, UserType.ESTABLISHMENT);
+            return await this.userRepository.createEstablishment(createUserDto, UserType.ESTABLISHMENT);
         }
     }
 
@@ -50,18 +50,28 @@ export class AuthService {
         if (token.startsWith('Bearer ')) {
             token = token.split(' ')[1]
         }
-        var infoUser = this.jwtService.verify(token)
-        let user;
-        if (infoUser) {
-            user = await this.userRepository.findOne({
-                where: {
-                    id: infoUser.id,
-                    status: true
-                }
-            })
-        } else {
-            throw new UnauthorizedException('Credenciais inválidas');
+        try{
+            var infoUser = this.jwtService.verify(token)
+            let user;
+            if (infoUser) {
+                user = await this.userRepository.findOne({
+                    where: {
+                        id: infoUser.id,
+                        status: true
+                    },
+                    relations: ['establishments', 'address']
+                })
+            } else {
+                throw new UnauthorizedException('Credenciais inválidas');
+            }
+            return user
+        }catch(error) {
+            console.error(error)
+            if(error && error.name === 'TokenExpiredError'){
+                throw new HttpException(error.message, 401)
+            }
+            return error
         }
-        return user
+        
     }
 }

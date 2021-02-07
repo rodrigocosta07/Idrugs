@@ -2,8 +2,12 @@ import {
     Entity, Column, Unique, PrimaryGeneratedColumn, CreateDateColumn,
     UpdateDateColumn,
     BaseEntity,
+    OneToMany,
+    JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Establishment } from './establishment.model';
+import { UserAddress } from './userAddress.model';
 
 @Entity('users')
 @Unique(['email'])
@@ -37,15 +41,21 @@ export class User extends BaseEntity {
 
     @Column({ nullable: false })
     salt: string;
-    
+
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @OneToMany(() => Establishment, establishment => establishment.user)
+    establishments: Establishment[];
+
+    @OneToMany(() => UserAddress, address => address.user)
+    address: UserAddress[];
+
     async checkPassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);
         return hash === this.password;
-      }
+    }
 }

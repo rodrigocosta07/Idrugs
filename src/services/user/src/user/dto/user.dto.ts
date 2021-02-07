@@ -4,6 +4,8 @@ import {
     MaxLength,
     MinLength,
   } from 'class-validator';
+import { Establishment } from '../establishment.model';
+import { UserAddress } from '../userAddress.model';
 export class CreateUserDto {
     @IsNotEmpty({
         message: 'Informe um endereço de email',
@@ -50,4 +52,7 @@ export class CreateUserDto {
         message: 'O Numero do celular deve ter 11 caracteres',
       })
       phone: string;
+
+      userAddress: UserAddress
+      establishment: Establishment
   }

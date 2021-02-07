@@ -11,6 +11,11 @@ export class AppController {
   signup(@Req() request: Request) {
     return this.appService.signup(request.body);
   }
+  
+  @Post("/signupEstablishment")
+  signupEstablishment(@Req() request: Request) {
+    return this.appService.signupEstablishment(request.body);
+  }
 
   @Post("/signin")
   signin(@Req() request: Request) {
@@ -19,18 +24,20 @@ export class AppController {
 
   @Post("/createProduct")
   async createProduct(@Req() request: Request) {
-    const userId = await this.appService.getCurrentUser(request.headers.authorization);
-    if (userId) {
-      request.body.IdEstablishment = userId
+    const user = await this.appService.getCurrentUser(request.headers.authorization);
+    if (user) {
       return this.appService.createProduct(request.body);
     }
   }
   
   @Post("/editProduct")
   async editProduct(@Req() request: Request) {
-    const userId = await this.appService.getCurrentUser(request.headers.authorization);
-    if (userId) {
+    const user = await this.appService.getCurrentUser(request.headers.authorization);
+    const establishment = user.establishments.find((est) => est.id === request.body.IdEstablishment)
+    if (user && establishment) {
       return this.appService.editProduct(request.body);
+    } else {
+      throw "Usuário sem permissão para alterar o produto"
     }
   }
   @Get("/getAllProducts")
