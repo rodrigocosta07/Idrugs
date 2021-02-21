@@ -1,0 +1,5 @@
+src/services/api-gateway/.env
+src/services/product/.env
+src/services/shopping/.env
+src/services/user/.env
+src/services/api-gateway/src/.env

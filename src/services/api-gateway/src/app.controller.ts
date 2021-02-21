@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
+import { Controller, ExceptionFilter, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
+import { AllExceptionsFilter } from 'filter/AllExceptionsFilter.filter';
 
 
 @Controller()
@@ -16,6 +17,8 @@ export class AppController {
   signupEstablishment(@Req() request: Request) {
     return this.appService.signupEstablishment(request.body);
   }
+
+  
 
   @Post("/signin")
   signin(@Req() request: Request) {

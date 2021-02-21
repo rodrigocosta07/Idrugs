@@ -1,9 +1,11 @@
-import { Catch, ArgumentsHost } from '@nestjs/common';
+import { Catch, ArgumentsHost, RpcExceptionFilter } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
+import { RpcException } from '@nestjs/microservices';
+import { Observable, throwError } from 'rxjs';
 
 @Catch()
-export class AllExceptionsFilter extends BaseExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    super.catch(exception, host);
+export class AllExceptionsFilter implements RpcExceptionFilter<RpcException>  {
+  catch(exception: RpcException, host: ArgumentsHost): Observable<any> {
+    return throwError(exception.getError());
   }
 }

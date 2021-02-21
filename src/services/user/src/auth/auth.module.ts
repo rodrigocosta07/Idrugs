@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+require('dotenv/config');
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'USER_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqps://rtztwavn:sHnStelCK5EVRW-hFc6p9N_kDs-4UBvU@hornet.rmq.cloudamqp.com/rtztwavn'],
+          urls: [process.env.RABBIT],
           queue: 'user',
           queueOptions: {
             durable: false

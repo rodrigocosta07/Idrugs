@@ -8,7 +8,7 @@ export class AppService {
   constructor(
     // @Inject("SERVICE_USER") private readonly userService: ClientProxy,
     @Inject("SERVICE_PRODUCT") private readonly productService: ClientProxy,
-    @Inject("USER_SERVICE") private readonly userService: ClientProxy,
+    @Inject("SERVICE_USER") private readonly userService: ClientProxy,
   ) { }
 
   signup(payload) {

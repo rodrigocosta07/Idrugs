@@ -1,24 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Transport } from "@nestjs/microservices";
-import { Logger } from "@nestjs/common";
-const logger = new Logger();
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
+require('dotenv/config');
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(AppModule, {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.RMQ,
     options: {
-      url: 'amqps://rtztwavn:sHnStelCK5EVRW-hFc6p9N_kDs-4UBvU@hornet.rmq.cloudamqp.com/rtztwavn',
+      urls: [process.env.RABBIT],
       queue: 'user',
       queueOptions: {
-        durable: true,
+        durable: false,
       },
     }
   });
-  await app.listen(() => logger.log("Microservice User is listening"));
+  await app.listenAsync()
 }
 bootstrap();
-
-
-
-url: 

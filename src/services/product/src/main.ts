@@ -1,17 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Transport } from "@nestjs/microservices";
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import { Logger } from "@nestjs/common";
 const logger = new Logger();
-
+require('dotenv/config');
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(AppModule, {
-    transport: Transport.TCP,
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
     options: {
-      host: "127.0.0.1",
-      port: 8889
+      urls: [process.env.RABBIT],
+      queue: 'product',
+      queueOptions: {
+        durable: false,
+      },
     }
   });
-  await app.listen(() => logger.log("Microservice PRODUCT is listening"));
+  await app.listenAsync()
 }
 bootstrap();

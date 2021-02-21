@@ -13,7 +13,7 @@ export class AuthController {
     constructor(private authService: AuthService) {}
     
     @ MessagePattern({ cmd: "signup" })
-    @UseFilters(new ExceptionFilter())
+    // @UseFilters(new ExceptionFilter())
     async signUp(
       @Body(ValidationPipe) createUserDto: CreateUserDto,
     ): Promise<{ message: string }> {
@@ -33,12 +33,13 @@ export class AuthController {
       };
     }
 
-
     @MessagePattern({ cmd: "signin" })
+    @UseFilters(new ExceptionFilter())
     async signIn(
       @Body(ValidationPipe) credentiaslsDto: CredentialsDto,
     ): Promise<{ token: string }> {
-      return await this.authService.signIn(credentiaslsDto);
+      const res =  await this.authService.signIn(credentiaslsDto);
+      return res
     }
 
     @MessagePattern({ cmd: "currentUser" })

@@ -6,6 +6,7 @@ import { UserRepository } from 'src/user/user.repository';
 import { UserType } from 'src/user/userType';
 import { CredentialsDto } from './dto/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
         const user = await this.userRepository.checkCredentials(credentialsDto);
 
         if (user === null) {
-            throw new UnauthorizedException('Credenciais inválidas');
+            throw new RpcException('Credenciais inválidas')
         }
 
         const jwtPayload = {
