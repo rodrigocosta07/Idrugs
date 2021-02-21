@@ -21,6 +21,17 @@ import { AppService } from './app.service';
         port: 8889
       }
     },
+    {
+      name: 'USER_SERVICE',
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqps://rtztwavn:sHnStelCK5EVRW-hFc6p9N_kDs-4UBvU@hornet.rmq.cloudamqp.com/rtztwavn'],
+        queue: 'user',
+        queueOptions: {
+          durable: false
+        },
+      }
+    }
   ])],
   controllers: [AppController],
   providers: [AppService],

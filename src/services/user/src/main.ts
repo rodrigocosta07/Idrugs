@@ -6,12 +6,19 @@ const logger = new Logger();
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
-    transport: Transport.TCP,
+    transport: Transport.RMQ,
     options: {
-      host: "127.0.0.1",
-      port: 8888
+      url: 'amqps://rtztwavn:sHnStelCK5EVRW-hFc6p9N_kDs-4UBvU@hornet.rmq.cloudamqp.com/rtztwavn',
+      queue: 'user',
+      queueOptions: {
+        durable: true,
+      },
     }
   });
   await app.listen(() => logger.log("Microservice User is listening"));
 }
 bootstrap();
+
+
+
+url: 

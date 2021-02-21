@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
+import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserRepository]),
@@ -11,4 +12,4 @@ import { PassportModule } from '@nestjs/passport';
   controllers: [UserController],
   providers: [UserService]
 })
-export class UserModule {}
+export class UserModule { }
