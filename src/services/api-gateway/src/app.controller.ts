@@ -25,6 +25,16 @@ export class AppController {
     return this.appService.signin(request.body);
   }
 
+  @Post("/confirmPurchase")
+  confirmPurchase(@Req() request: Request) {
+    return this.appService.confirmPurchase(request.body);
+  }
+
+  @Post("/changeStatus")
+  changeStatus(@Req() request: Request) {
+    return this.appService.changeStatus(request.body);
+  }
+
   @Post("/createProduct")
   async createProduct(@Req() request: Request) {
     const user = await this.appService.getCurrentUser(request.headers.authorization);

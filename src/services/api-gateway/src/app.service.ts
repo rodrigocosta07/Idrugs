@@ -6,9 +6,9 @@ import { map } from "rxjs/operators";
 @Injectable()
 export class AppService {
   constructor(
-    // @Inject("SERVICE_USER") private readonly userService: ClientProxy,
     @Inject("SERVICE_PRODUCT") private readonly productService: ClientProxy,
     @Inject("SERVICE_USER") private readonly userService: ClientProxy,
+    @Inject("SERVICE_SHOPPING") private readonly shoppingService: ClientProxy,
   ) { }
 
   signup(payload) {
@@ -22,7 +22,6 @@ export class AppService {
   }
 
   signin(payload) {
-    console.log(payload);
     return this.userService
       .send<any>({ cmd: 'signin' }, payload)
   }
@@ -33,21 +32,28 @@ export class AppService {
   }
 
   getAllProducts(payload) {
-    console.log(payload);
     return this.productService
       .send<any>({ cmd: 'getAllProducts' }, payload)
   }
 
   getProduct(payload) {
-    console.log(payload);
     return this.productService
       .send<any>({ cmd: 'getProduct' }, payload)
   }
 
   editProduct(payload) {
-    console.log(payload);
     return this.productService
       .send<any>({ cmd: 'editProduct' }, payload)
+  }
+
+  confirmPurchase(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'confirmPurchase' }, payload)
+  }
+
+  changeStatus(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'changeStatus' }, payload)
   }
 
   async getCurrentUser(payload) {

@@ -15,7 +15,7 @@ export class CreatShoppingCartDto {
       @Min(1, {
         message: 'O valor do produto deve ser maior que 0',
       })
-      TotalValue: number;
+      totalValue: number;
     
       @IsNotEmpty({
         message: 'Informe um valor do produto',
@@ -39,7 +39,7 @@ export class CreatShoppingCartDto {
       @MaxLength(200, {
         message: 'O ID do Estabelecimento deve ter menos de 200 caracteres',
       })
-      IdEstablishment: string
+      idEstablishment: string
 
       @IsNotEmpty({
         message: 'Informe o ID do estabelecimento',
@@ -47,7 +47,7 @@ export class CreatShoppingCartDto {
       @MaxLength(200, {
         message: 'O ID do Estabelecimento deve ter menos de 200 caracteres',
       })
-      IdUser: string
+      idUser: string
 
       payment: string
 
