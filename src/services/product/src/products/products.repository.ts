@@ -41,14 +41,14 @@ export class ProductRepository extends Repository<ProductModel> {
     const product = this.findOne({
       where: {
         status: true,
-        id: id
+        id
       }
     });
     return product;
   }
 
   async editProduct(editProduct: editProductDto): Promise<ProductModel> {
-    const product = this.findOne({
+    const product = await this.findOne({
       where: {
         status: true,
         id: editProduct.id
@@ -58,15 +58,15 @@ export class ProductRepository extends Repository<ProductModel> {
     if (!product) {
       throw new exception("Produto não encontrado!")
     }
-    (await product).name = editProduct.name;
-    (await product).image = editProduct.image;
-    (await product).amount = editProduct.amount;
-    (await product).value = editProduct.value;
-    (await product).status = editProduct.status;
-    (await product).updatedAt = new Date();
-    
+    product.name = editProduct.name;
+    product.image = editProduct.image;
+    product.amount = editProduct.amount;
+    product.value = editProduct.value;
+    product.status = editProduct.status;
+    product.updatedAt = new Date();
+
     try {
-      await (await product).save();
+      await product.save();
       return product;
     } catch (error) {
       throw new InternalServerErrorException(

@@ -44,8 +44,25 @@ export class ShoppingCartRepository extends Repository<ShoppingModel> {
     }
   }
 
-  changeStatus(request: ChangeStatusDto) {
-    const shopping = new ShoppingModel();
-    return shopping
+  async changeStatus(request: ChangeStatusDto): Promise<ShoppingModel> {
+    const shopping = await this.findOne({
+      where: {
+        id: request.idShopping
+      }
+    });
+
+    if (!shopping) {
+      throw new exception("Pedido não encontrado!")
+    }
+    shopping.status = typeStatus[request.status.toUpperCase()]
+
+    try {
+      await shopping.save()
+      return shopping
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao atualizar o produto no banco de dados',
+      );
+    }
   }
 }
