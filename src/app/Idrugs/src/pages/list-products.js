@@ -1,42 +1,42 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
-import { ListItem, Avatar, SearchBar } from 'react-native-elements';
+import { ListItem, Avatar, SearchBar, makeStyles, Icon } from 'react-native-elements';
 
 const list = [
     {
-        name: 'Amy Farha',
+        name: 'Dipirona',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'dor e febre'
     },
     {
-        name: 'Chris Jackson',
+        name: 'Anador',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-        subtitle: 'Vice Chairman'
+        subtitle: 'dor'
     },
     {
-        name: 'Amy Farha',
+        name: 'Buscopam',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'Dor'
     },
     {
-        name: 'Amy Farha',
+        name: 'DIP',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'AntiAlergico'
     },
     {
-        name: 'Amy Farha',
+        name: 'Ciclo21',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'Anticocepcional'
     },
     {
-        name: 'Amy Farha',
+        name: 'Mestiolate',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'Curativo'
     },
     {
-        name: 'Amy Farha',
+        name: 'Apracur',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President'
+        subtitle: 'Gripe'
     },
     {
         name: 'Amy Farha',
@@ -85,15 +85,18 @@ function ListProducts() {
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => (
-        <View style={{ flex: 1 }}>
+        <View>
             <ListItem bottomDivider  >
-                <Avatar source={{ uri: item.avatar_url }} />
                 <ListItem.Content>
                     <ListItem.Title>{item.name}</ListItem.Title>
                     <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
-                    <ListItem.Subtitle>RS$ 10,00</ListItem.Subtitle>
+                    <ListItem.Subtitle>R$ 10,00</ListItem.Subtitle>
                 </ListItem.Content>
-                <ListItem.Chevron />
+            
+                <Icon name={'cart-plus'} 
+                type='font-awesome' color='#005eff'
+                onPress={() => console.log('hello')}
+                containerStyle={{ alignItems: 'flex-end', paddingRight: '20px' }} />
             </ListItem>
         </View>
 
@@ -101,15 +104,17 @@ function ListProducts() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View>
-                <SearchBar placeholder="Type Here..." />
-                <FlatList
-                    keyExtractor={keyExtractor}
-                    data={list}
-                    renderItem={renderItem}
-                />
+                <SearchBar lightTheme={true} round={true} placeholder="Digite o nome do produto..." />
             </View>
+            <FlatList
+                keyExtractor={keyExtractor}
+                data={list}
+                renderItem={renderItem}
+            />
         </SafeAreaView>
     )
 
 }
 export default ListProducts;
+
+

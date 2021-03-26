@@ -34,7 +34,7 @@ export default function App() {
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'tomato',
+          activeTintColor: '#005eff',
           inactiveTintColor: 'gray',
         }}>
         <Tab.Screen name="Produtos" component={ListProducts} />
