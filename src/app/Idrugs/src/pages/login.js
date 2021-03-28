@@ -1,39 +1,74 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   TouchableOpacity,
 } from "react-native";
 
 import { Image, Input } from "react-native-elements";
 const image = require("../../assets/idrugsIcon.png");
+import { useForm, Controller } from "react-hook-form";
+import instanceApi from "../api/instanceAPI";
+import { AuthContext } from "../auth/authContext";
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { signIn } = React.useContext(AuthContext);
+  const { control, handleSubmit, errors } = useForm();
+  const onSubmit = async form => {
+    console.log(form);
+    try {
+      const response = await instanceApi.post('/signin', form)
+      const {data} = response
+      signIn({token: data.token})
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-
       <StatusBar style="auto" />
       <View style={styles.inputView}>
-        <Input onChangeText={(email) => setEmail(email)} style={styles.TextInput} placeholder="Email" />
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <Input
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={value => onChange(value)}
+              value={value}
+              placeholder="Email"
+            />
+          )}
+          name="email"
+          defaultValue=""
+          rules={{ required: true }}
+        />
       </View>
-
       <View style={styles.inputView}>
-         <Input secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)} onChangeText={(email) => setEmail(email)} style={styles.TextInput} placeholder="Senha" />
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <Input
+            secureTextEntry={true}
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={value => onChange(value)}
+              value={value}
+              placeholder="Senha"
+            />
+          )}
+          name="password"
+          defaultValue=""
+          rules={{ required: true }}
+        />
       </View>
-
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => { navigation.navigate('Cadastro') }}>
         <Text style={styles.forgot_button}>Cadastre-se</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => {navigation.navigate('Cadastro')}} style={styles.loginBtn}>
+      <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.loginBtn}>
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
     </View>

@@ -22,6 +22,7 @@ export class AppController {
 
   @Post("/signin")
   signin(@Req() request: Request) {
+    console.log(request)
     return this.appService.signin(request.body);
   }
 

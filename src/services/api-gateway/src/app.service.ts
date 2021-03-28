@@ -22,6 +22,7 @@ export class AppService {
   }
 
   signin(payload) {
+    console.log(payload)
     return this.userService
       .send<any>({ cmd: 'signin' }, payload)
   }
