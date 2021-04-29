@@ -4,16 +4,17 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ListProducts  from "./src/pages/list-products";
-import productDetails  from "./src/pages/product-details";
+import ListProducts from "./src/pages/list-products";
+import productDetails from "./src/pages/product-details";
 import Login from "./src/pages/login";
 import Register from "./src/pages/register";
 import ShoopingCart from "./src/pages/shopping-cart";
 import { Ionicons } from "@expo/vector-icons";
-import {AuthContext} from  './src/auth/authContext'
+import { AuthContext } from './src/auth/authContext'
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShoppingCart from "./src/pages/shopping-cart";
+import { CartProductsProvider } from "./src/contexts/cartContext";
 
 function SettingsScreen() {
   const { signOut } = React.useContext(AuthContext);
@@ -38,7 +39,7 @@ function SplashScreen() {
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-export default function App({navigation}) {
+export default function App({ navigation }) {
   const [state, dispatch] = useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -70,7 +71,7 @@ export default function App({navigation}) {
   );
 
   const getStorage = async key => {
-   return await AsyncStorage.getItem(key);
+    return await AsyncStorage.getItem(key);
   }
 
   const setStorage = async (key, value) => {
@@ -103,12 +104,12 @@ export default function App({navigation}) {
   const authContext = useMemo(
     () => ({
       signIn: async (data) => {
-          console.log(data)
-          let token
-          if(data.token){
-            await setStorage('userToken', data.token);
-            token = data.token
-          }
+        console.log(data)
+        let token
+        if (data.token) {
+          await setStorage('userToken', data.token);
+          token = data.token
+        }
         dispatch({ type: 'SIGN_IN', token });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
@@ -127,22 +128,23 @@ export default function App({navigation}) {
   const HomePages = () => {
     return (
       <Stack.Navigator>
-          <Stack.Screen name="Produtos" component={ListProducts} />
-          <Stack.Screen name="Detalhes" component={productDetails} />
+        <Stack.Screen name="Produtos" component={ListProducts} />
+        <Stack.Screen name="Detalhes" component={productDetails} />
       </Stack.Navigator>
     );
   }
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        {state.isLoading ? (
+      <CartProductsProvider>
+        <NavigationContainer>
+          {state.isLoading ? (
             <Stack.Navigator screenOptions={({ route }) => ({
               headerShown: (route.name === 'Login' ? false : true)
             })}>
               <Stack.Screen name="loading" component={SplashScreen} />
             </Stack.Navigator>
-          ): state.userToken == null ? (
+          ) : state.userToken == null ? (
             <Stack.Navigator screenOptions={({ route }) => ({
               headerShown: (route.name === 'Login' ? false : true)
             })}>
@@ -154,12 +156,12 @@ export default function App({navigation}) {
               screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                   let iconName;
-  
+
                   if (route.name === "Home") {
                     iconName = focused ? "search-outline" : "search-outline";
                   } else if (route.name === "Settings") {
                     iconName = focused ? "ios-list-box" : "ios-list";
-                  } else if(route.name === "Carrinho") {
+                  } else if (route.name === "Carrinho") {
                     iconName = "cart-sharp";
                   }
                   return <Ionicons name={iconName} size={size} color={color} />;
@@ -175,7 +177,8 @@ export default function App({navigation}) {
               <Tab.Screen name="Carrinho" component={ShoppingCart} />
             </Tab.Navigator>
           )}
-      </NavigationContainer>
+        </NavigationContainer>
+      </CartProductsProvider>
     </AuthContext.Provider>
 
   );
