@@ -29,6 +29,7 @@
     "amqp-connection-manager": "^3.2.2",
     "amqplib": "^0.6.0",
     "dotenv": "^8.2.0",
+    "heroku": "^7.54.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3"
