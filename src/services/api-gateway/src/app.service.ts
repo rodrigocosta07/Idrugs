@@ -57,11 +57,11 @@ export class AppService {
       .send<any>({ cmd: 'changeStatus' }, payload)
   }
 
-  async getCurrentUser(payload) {
+  async getCurrentUser(payload, type) {
     try {
       var user = await this.userService
         .send<any>({ cmd: 'currentUser' }, payload).toPromise()
-      if (user && user.type === 'ESTABLISHMENT') {
+      if (user && user.type === type) {
         return user
       } else {
         throw new exception('Usuário não tem permissão para cadastrar produtos')

@@ -11,9 +11,10 @@ import { Image, Input } from "react-native-elements";
 const image = require("../../assets/idrugsIcon.png");
 import { useForm, Controller } from "react-hook-form";
 import instanceApi from "../api/instanceAPI";
-import { AuthContext } from "../auth/authContext";
+import { useAuth } from "../hooks/useAuth";
 export default function Login({ navigation }) {
-  const { signIn } = React.useContext(AuthContext);
+  const { signIn } = useAuth;
+  const { cartProducts, getProducts } = useCartProduct();
   const { control, handleSubmit, errors } = useForm();
   const onSubmit = async form => {
     console.log(form);

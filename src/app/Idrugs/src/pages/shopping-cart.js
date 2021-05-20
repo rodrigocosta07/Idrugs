@@ -1,18 +1,78 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
-import { ListItem, Avatar, SearchBar, makeStyles, Icon, Header, Button, PricingCard } from 'react-native-elements';
+import { ListItem, Avatar, SearchBar, makeStyles, Icon, Header, Button, Card, Overlay, Input } from 'react-native-elements';
 import { useCartProduct } from '../hooks/useCartProducs'
-import { CartProductsProvider } from '../contexts/cartContext'
+import instanceApi from "../api/instanceAPI";
 const iconMedicamento = require("../../assets/medicamento.jpg");
 import { useFocusEffect } from '@react-navigation/native';
+import Modal from 'modal-react-native-web';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Main() {
     const keyExtractor = (item, index) => index.toString()
     const { cartProducts, getProducts } = useCartProduct();
     const [products, setProducts] = useState();
+    const [totalValue, setTotalValue] = useState(0);
+    const [shippingValue, setShippingValue] = useState(10.00);
+    const [productsSum, setProductsSum] = useState(0);
+    const [visible, setVisible] = useState(false);
+    const [address, setAddress] = useState('')
+    const toggleOverlay = () => {
+        setVisible(!visible);
+    };
+
+    const calcValue = () => {
+        if (products) {
+            const value = products.reduce((a, b) => {
+                if(a !== null && b !== null ){
+                    return  a + Number(b.value)  
+                }
+            }, 0)
+            setProductsSum(value)
+            const totalValue = Number(value) + shippingValue
+            setTotalValue(totalValue)
+        }
+    }
+
+    const handleConfirm = async () =>{
+        const productMapped = products.map((item) => {
+            item.IdProduct = item.id
+            return item
+        })
+        const obj = {
+            totalValue: totalValue,
+            freightValue: shippingValue,
+            address: address,
+            idEstablishment: products[0].IdEstablishment,
+            payment: "dinheiro",
+            status: "new",
+            products: productMapped
+        }
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+            const response = await instanceApi.post('/confirmPurchase', obj, config)
+            console.log(response)
+            toggleOverlay()
+        }catch(error){
+            console.log(error)
+        }
+        
+    }
+
+
+    useFocusEffect(() => {
+        calcValue()
+    })
+
     useEffect(() => {
         setProducts(cartProducts)
     }, [cartProducts])
+
+
+
     const renderItem = ({ item }) => (
         <View style={{ marginVertical: 5 }}>
             <ListItem bottomDivider containerStyle={{ borderRadius: 20, borderColor: '#fff', borderWidth: 1 }}  >
@@ -63,9 +123,40 @@ function Main() {
                                 }
                                 buttonStyle={{ width: 200, padding: 20, borderRadius: 20, borderColor: '#005eff', borderWidth: 1 }}
                                 iconRight
-                                title="Finalizar Pedido"
+                                onPress={() => toggleOverlay()}
+                                title="Confirmar dados"
                             />
                         </View>
+
+                        <Overlay ModalComponent={Modal} isVisible={visible} onBackdropPress={toggleOverlay}>
+                            <Card>
+                                <Card.Title>Confirmação do pedido</Card.Title>
+                                <Card.Divider />
+                                <Input
+                                    placeholder='Endereço de entrega'
+                                    onChangeText={value => setAddress(value)}
+                                />
+                                <View style={{ alignItems: 'center', marginHorizontal: 15 }}>
+                                    <Text h5 style={{ color: "#4f9deb", fontSize: 15, marginBottom: 10 }}>Valor frete: R$: {shippingValue} </Text>
+                                    <Text h5 style={{ color: "#4f9deb", fontSize: 15, marginBottom: 10 }}>Valor do pedido: R$: {productsSum} </Text>
+                                    <Text h5 style={{ color: "#4f9deb", fontSize: 15, marginBottom: 10 }}>Valor total do pedido: R$: {totalValue} </Text>
+                                </View>
+                                <Button
+                                    icon={
+                                        <Icon
+                                            name="check"
+                                            size={15}
+                                            color="white"
+                                            style={{ margin: 5 }}
+                                        />
+                                    }
+                                    buttonStyle={{ width: 200, padding: 20, borderRadius: 20, borderColor: '#005eff', borderWidth: 1 }}
+                                    iconRight
+                                    onPress={() => handleConfirm()}
+                                    title="Finalizar Pedido"
+                                />
+                            </Card>
+                        </Overlay>
                     </SafeAreaView>
                     : null
             }

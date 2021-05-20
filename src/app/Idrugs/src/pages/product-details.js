@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Avatar, SearchBar, makeStyles, Icon, PricingCard, Card, ListItem, Button } from 'react-native-elements';
 import { useCartProduct } from '../hooks/useCartProducs'
-import { CartProductsProvider } from '../contexts/cartContext'
-import instanceApi from "../api/instanceAPI";
 const iconMedicamento = require("../../assets/medicamento.jpg");
 
 function Main({ route, navigation }) {
@@ -35,11 +33,6 @@ function Main({ route, navigation }) {
         <Card>
             <Card.Title>{product.name}</Card.Title>
             <Card.Divider />
-            {/* <Card.Image source={require('../images/pic2.jpg')}>
-                    
-                
-                   
-                </Card.Image> */}
             <View style={{ alignItems: 'center' }}>
                 <Text h3 style={{ color: "#4f9deb", fontSize: 20, fontWeight: 400 }}>{`R$ ${product.value}`}</Text>
                 <Text h5 style={{ color: "#4f9deb", fontSize: 15, marginBottom: 10 }}>Produto: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </Text>
