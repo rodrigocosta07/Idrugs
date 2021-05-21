@@ -27,8 +27,12 @@ export class AppController {
   }
 
   @Post("/confirmPurchase")
-  confirmPurchase(@Req() request: Request) {
-    return this.appService.confirmPurchase(request.body);
+  async confirmPurchase(@Req() request: Request) {
+    const user = await this.appService.getCurrentUser(request.headers.authorization, 'USER');
+    if (user) {
+      request.body.idUser = user.id
+      return this.appService.confirmPurchase(request.body);
+    } 
   }
 
   @Post("/changeStatus")
@@ -38,15 +42,23 @@ export class AppController {
 
   @Post("/createProduct")
   async createProduct(@Req() request: Request) {
-    const user = await this.appService.getCurrentUser(request.headers.authorization);
+    const user = await this.appService.getCurrentUser(request.headers.authorization, 'ESTABLISHMENT');
     if (user) {
       return this.appService.createProduct(request.body);
+    }
+  }
+
+  @Get("/getUser")
+  async GetUser(@Req() request: Request) {
+    const user = await this.appService.getCurrentUser(request.headers.authorization , '');
+    if (user) {
+      return user;
     }
   }
   
   @Post("/editProduct")
   async editProduct(@Req() request: Request) {
-    const user = await this.appService.getCurrentUser(request.headers.authorization);
+    const user = await this.appService.getCurrentUser(request.headers.authorization, 'ESTABLISHMENT');
     const establishment = user.establishments.find((est) => est.id === request.body.IdEstablishment)
     if (user && establishment) {
       return this.appService.editProduct(request.body);
