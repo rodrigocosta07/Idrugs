@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React , {useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -13,19 +13,19 @@ import { useForm, Controller } from "react-hook-form";
 import instanceApi from "../api/instanceAPI";
 import { useAuth } from "../hooks/useAuth";
 export default function Login({ navigation }) {
-  const { signIn } = useAuth;
-  const { cartProducts, getProducts } = useCartProduct();
+  const { signIn, auth } = useAuth();
   const { control, handleSubmit, errors } = useForm();
   const onSubmit = async form => {
     console.log(form);
     try {
       const response = await instanceApi.post('/signin', form)
       const {data} = response
-      signIn({token: data.token})
+      signIn({token: data.token, type: data.type})
     } catch (error) {
       console.log(error)
     }
   }
+
 
   return (
     <View style={styles.container}>
@@ -120,3 +120,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#005eff",
   },
 });
+

@@ -2,7 +2,9 @@ import {
     Entity, Column, Unique, PrimaryGeneratedColumn, CreateDateColumn,
     UpdateDateColumn,
     BaseEntity,
+    ManyToOne,
 } from 'typeorm';
+import { ShoppingModel } from './shopping.model';
 
 @Entity('productShopping')
 export class ProductShoppingModel extends BaseEntity {
@@ -22,7 +24,11 @@ export class ProductShoppingModel extends BaseEntity {
     IdEstablishment: string;
 
     @Column({ nullable: false, type: 'varchar', length: 200 })
-    IdCart: string;
+    shoppingId: string;
+
+ 
+    @ManyToOne(() => ShoppingModel, shopping => shopping.products)
+    shopping: ShoppingModel
 
     @CreateDateColumn()
     createdAt: Date;

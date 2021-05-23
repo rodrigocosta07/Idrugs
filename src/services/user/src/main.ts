@@ -14,6 +14,10 @@ async function bootstrap() {
       },
     }
   });
+  
   await app.listenAsync()
+  const apirest = await NestFactory.create(AppModule);
+  apirest.enableCors();
+  await apirest.listen(process.env.PORT || 3000);
 }
 bootstrap();

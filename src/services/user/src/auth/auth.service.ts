@@ -44,7 +44,7 @@ export class AuthService {
         };
         const token = await this.jwtService.sign(jwtPayload);
 
-        return { token };
+        return { token, type: user.type };
     }
 
     async checkUser(token: string) {

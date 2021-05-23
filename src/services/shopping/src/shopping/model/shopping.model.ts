@@ -46,6 +46,6 @@ export class ShoppingModel extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToMany(() => ProductShoppingModel, product => product.IdCart)
+    @OneToMany(() => ProductShoppingModel, product => product.shopping)
     products: ProductShoppingModel[];
 }

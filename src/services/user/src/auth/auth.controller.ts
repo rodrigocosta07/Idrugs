@@ -37,7 +37,7 @@ export class AuthController {
     @UseFilters(new ExceptionFilter())
     async signIn(
       @Body(ValidationPipe) credentiaslsDto: CredentialsDto,
-    ): Promise<{ token: string }> {
+    ): Promise<{ token: string, type: string }> {
       const res =  await this.authService.signIn(credentiaslsDto);
       return res
     }

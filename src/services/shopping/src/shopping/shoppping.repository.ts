@@ -2,9 +2,10 @@ import { EntityRepository, Repository } from 'typeorm';
 import { InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { ShoppingModel, typeStatus } from './model/shopping.model';
 import { CreatShoppingCartDto, editProductDto } from './dto/shopping.dto';
-import { exception } from 'console';
 import { ProductShoppingModel } from './model/productShopping.model';
-import { ChangeStatusDto } from './dto/changeStatus.dto';
+import { ChangeStatusDto } from './dto/ChangeStatus.dto';
+import { GetStatusDto } from './dto/GetStatus.dto';
+import { GetByEstablishmentIdDto, GetByIdDto, GetByUserIdDto } from './dto/GetModel';
 @EntityRepository(ShoppingModel)
 export class ShoppingCartRepository extends Repository<ShoppingModel> {
 
@@ -27,7 +28,7 @@ export class ShoppingCartRepository extends Repository<ShoppingModel> {
       for (let index = 0; index < products.length; index++) {
         const product = products[index];
         const productShopping = new ProductShoppingModel()
-        productShopping.IdCart = shoppingCart.id
+        productShopping.shoppingId = shoppingCart.id
         productShopping.IdEstablishment = product.IdEstablishment
         productShopping.IdProduct = product.IdProduct
         productShopping.name = product.name
@@ -38,6 +39,7 @@ export class ShoppingCartRepository extends Repository<ShoppingModel> {
       shoppingCart.products = productsShopping
       return shoppingCart;
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(
         'Erro ao salvar o produto no banco de dados',
       );
@@ -52,7 +54,7 @@ export class ShoppingCartRepository extends Repository<ShoppingModel> {
     });
 
     if (!shopping) {
-      throw new exception("Pedido não encontrado!")
+      throw new InternalServerErrorException("Pedido não encontrado!")
     }
     shopping.status = typeStatus[request.status.toUpperCase()]
 
@@ -64,5 +66,58 @@ export class ShoppingCartRepository extends Repository<ShoppingModel> {
         'Erro ao atualizar o produto no banco de dados',
       );
     }
+  }
+
+  async getStatus(request: GetStatusDto): Promise<ShoppingModel> {
+    const shopping = await this.findOne({
+      where: {
+        id: request.idShopping
+      }
+    });
+
+    if (!shopping) {
+      throw new InternalServerErrorException("Pedido não encontrado!")
+    }
+    return shopping
+  }
+
+  async getOrdersByEstablishment(request: GetByEstablishmentIdDto): Promise<ShoppingModel[]> {
+    const shoppings = await this.find({
+      where: {
+        IdEstablishment: request.idEstablishment
+      }
+    });
+
+    if (!shoppings || shoppings.length ===0) {
+      throw new InternalServerErrorException("Pedido não encontrado!")
+    }
+    return shoppings
+  }
+
+  async getOrdersByUser(request: GetByUserIdDto): Promise<ShoppingModel[]> {
+    const shopping = await this.find({
+      where: {
+        IdUser: request.idUser
+      }
+    });
+
+    if (!shopping) {
+      throw new InternalServerErrorException("Pedido não encontrado!")
+    }
+    return shopping
+  }
+
+  async getOrdersById(request: GetByIdDto): Promise<ShoppingModel> {
+    const shopping = await this.findOne({
+      where: {
+        id: request.idShopping
+      },
+      relations: ["products"]
+    });
+
+    if (!shopping) {
+      throw new InternalServerErrorException("Pedido não encontrado!")
+    }
+    return shopping
   }
 }

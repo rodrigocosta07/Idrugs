@@ -40,6 +40,12 @@ export class AppController {
     return this.appService.changeStatus(request.body);
   }
 
+  
+  @Post("/getStatus")
+  getStatus(@Req() request: Request) {
+    return this.appService.getStatus(request.body);
+  }
+
   @Post("/createProduct")
   async createProduct(@Req() request: Request) {
     const user = await this.appService.getCurrentUser(request.headers.authorization, 'ESTABLISHMENT');
@@ -74,6 +80,34 @@ export class AppController {
   @Get("/getProduct/:id")
   getProduct(@Param('id') id: string) {
     return this.appService.getProduct(id);
+  }
+
+  @Get("/getByEstablishment")
+  async getByEstablishment(@Req() request: Request) {
+    const user = await this.appService.getCurrentUser(request.headers.authorization, 'ESTABLISHMENT');
+    const establishment = user.establishments[0]
+    if (user) {
+      request.body.idEstablishment = establishment.id
+      return this.appService.getByEstablishment(request.body);
+    } else {
+      throw "Usuário não encontrado"
+    }
+  }
+
+  @Get("/getByUser")
+  async getByUser(@Req() request: Request) {
+    const user = await this.appService.getCurrentUser(request.headers.authorization, 'USER');
+    if (user) {
+      request.body.idUser = user.id
+      return this.appService.getByUser(request.body);
+    } else {
+      throw "Usuário não encontrado"
+    }
+  }
+
+  @Get("/getById/:id")
+  getById(@Param('id') id: string) {
+    return this.appService.getById({idShopping: id});
   }
 
  

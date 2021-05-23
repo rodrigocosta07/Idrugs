@@ -1,58 +1,51 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, { createContext, useReducer, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const  AuthContext = createContext({userToken: null });
+export const  AuthContext = createContext({
+  isLoading: true,
+  isSignout: false,
+  userToken: null,
+});
 
 export function AuthProvider({ children }) {
+  const [auth, setAuth] = useState({
+    isLoading: true,
+    isSignout: false,
+    userToken: null,
+    userType: null
+  })
 
 
-  const [state, dispatch] = useReducer(
-    (prevState, action) => {
-      switch (action.type) {
-        case 'RESTORE_TOKEN':
-          return {
-            ...prevState,
-            userToken: action.token,
-            isLoading: false,
-          };
-        case 'SIGN_IN':
-          return {
-            ...prevState,
-            isSignout: false,
-            userToken: action.token,
-          };
-        case 'SIGN_OUT':
-          return {
-            ...prevState,
-            isSignout: true,
-            userToken: null,
-          };
+  const initContext = async (init) => {
+    let userToken;
+    let userType
+    try {
+      userToken = await getStorage('userToken');
+      userType = await getStorage('userType');
+      if(!userToken) {
+        setAuth({
+          isLoading: true,
+          isSignout: false,
+          userToken: null,
+          userType: null
+        });
       }
-    },
-    {
-      isLoading: true,
-      isSignout: false,
-      userToken: null,
+    } catch (e) {
+      console.log(e)
     }
-  );
-
-  const initContext = (init) => {
-   console.log(init)
-    const bootstrapAsync = async () => {
-      let userToken;
-      try {
-        userToken = await getStorage('userToken');
-      } catch (e) {
-        console.log(e)
-      }
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-    };
-    bootstrapAsync();
+    setAuth({
+      isLoading: false,
+      isSignout: false,
+      userToken: userToken,
+      userType: userType
+    });
   }
 
-  
+  const getAuth = () => {
+    return auth
+  }
 
   useEffect(() => {
-    initContext()
+  initContext()
   }, []);
 
   const getStorage = async key => {
@@ -68,12 +61,26 @@ export function AuthProvider({ children }) {
       let token
       if (data.token) {
         await setStorage('userToken', data.token);
+        await setStorage('userType', data.type);
         token = data.token
       }
-      dispatch({ type: 'SIGN_IN', token });
+      setAuth({
+        isLoading: false,
+        isSignout: false,
+        userToken: token,
+        userType: data.type
+      });
     }
     
-    const signOut = () => dispatch({ type: 'SIGN_OUT' })
+    const signOut = async () => {
+      await AsyncStorage.clear()
+      setAuth({
+        isLoading: false,
+        isSignout: true,
+        userToken: null,
+        userType: null
+      });
+    } 
     
     const signUp  = async (data) => {
       // In a production app, we need to send user data to server and get a token
@@ -81,11 +88,11 @@ export function AuthProvider({ children }) {
       // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
       // In the example, we'll use a dummy token
 
-      dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+      setAuth({ type: 'SIGN_IN', token: 'dummy-auth-token' });
     }
     return (
       <>
-        <AuthContext.Provider value={{ signOut, signIn, signUp, state, initContext }}>
+        <AuthContext.Provider value={{ signOut, signIn, signUp, auth, initContext }}>
           {children}
         </AuthContext.Provider>
       </>

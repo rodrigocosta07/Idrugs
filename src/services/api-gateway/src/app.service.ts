@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { exception } from 'console';
-import { map } from "rxjs/operators";
+import { InternalServerErrorException, BadRequestException } from '@nestjs/common';
+
 
 @Injectable()
 export class AppService {
@@ -52,6 +52,11 @@ export class AppService {
       .send<any>({ cmd: 'confirmPurchase' }, payload)
   }
 
+  getStatus(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'getStatus' }, payload)
+  }
+
   changeStatus(payload) {
     return this.shoppingService
       .send<any>({ cmd: 'changeStatus' }, payload)
@@ -64,11 +69,27 @@ export class AppService {
       if (user && user.type === type) {
         return user
       } else {
-        throw new exception('Usuário não tem permissão para cadastrar produtos')
+        throw new InternalServerErrorException('Usuário não tem permissão para cadastrar produtos')
       }
     } catch (error) {
-      throw new exception(error)
+      throw error
     }
 
+  }
+
+
+  getByEstablishment(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'getByEstablishment' }, payload)
+  }
+
+  getByUser(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'getByUser' }, payload)
+  }
+
+  getById(payload) {
+    return this.shoppingService
+      .send<any>({ cmd: 'getById' }, payload)
   }
 }

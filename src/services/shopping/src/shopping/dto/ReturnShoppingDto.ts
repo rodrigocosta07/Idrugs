@@ -4,3 +4,8 @@ export class ReturnShoppingDto {
     shopping: ShoppingModel;
     message: string;
 }
+
+export class ReturnAllShoppingDto {
+    shopping: ShoppingModel[];
+    message: string;
+}
