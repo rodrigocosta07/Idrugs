@@ -8,6 +8,7 @@ import { AuthProvider } from "./src/auth/authContext";
 import { CartProductsProvider } from "./src/contexts/cartContext";
 import Init from "./src/pages/init";
 
+
 export default function App({ navigation }) {
   return (
     <AuthProvider>
